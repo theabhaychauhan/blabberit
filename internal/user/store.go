@@ -12,16 +12,38 @@ import (
 
 var DB *gorm.DB
 
+type DBConfig struct {
+	Host string
+	User string
+	Pass string
+	Name string
+	Port string
+}
+
+func loadConfig() DBConfig {
+	cfg := DBConfig{
+		Host: os.Getenv("DB_HOST"),
+		User: os.Getenv("DB_USER"),
+		Pass: os.Getenv("DB_PASS"),
+		Name: os.Getenv("DB_NAME"),
+		Port: os.Getenv("DB_PORT"),
+	}
+	fmt.Printf("📦 Loaded DB Config: %+v\n", cfg)
+	if cfg.Host == "" || cfg.User == "" || cfg.Pass == "" || cfg.Name == "" || cfg.Port == "" {
+		log.Fatal("Missing one or more required DB environment variables")
+	}
+
+	return cfg
+}
+
 func InitDB() {
 	_ = godotenv.Load(".env")
 
+	config := loadConfig()
+
 	dsn := fmt.Sprintf(
 		"host=%s user=%s password=%s dbname=%s port=%s sslmode=disable",
-		os.Getenv("DB_HOST"),
-		os.Getenv("DB_USER"),
-		os.Getenv("DB_PASS"),
-		os.Getenv("DB_NAME"),
-		os.Getenv("DB_PORT"),
+		config.Host, config.User, config.Pass, config.Name, config.Port,
 	)
 
 	var err error

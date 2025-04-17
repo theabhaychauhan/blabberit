@@ -5,8 +5,10 @@ services:
     image: postgres:15
     container_name: blabberit_db
     restart: always
-    env_file:
-      - .env
+    environment:
+      POSTGRES_USER: blabberuser
+      POSTGRES_PASSWORD: blabberpass
+      POSTGRES_DB: blabberit
     ports:
       - "5432:5432"
     volumes:

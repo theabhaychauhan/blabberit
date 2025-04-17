@@ -3,9 +3,13 @@ package main
 import (
 	"fmt"
 	"net/http"
+
+	"github.com/thechauhanabhay/blabberit/internal/user"
 )
 
 func main() {
+	user.InitDB()
+
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintln(w, "BlabberIt server is running 🚀")
 	})
