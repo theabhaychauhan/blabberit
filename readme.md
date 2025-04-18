@@ -1,18 +1,3 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>BlabberIt</title>
-  <style>
-    body { font-family: sans-serif; line-height: 1.6; max-width: 800px; margin: auto; padding: 2rem; }
-    h1, h2, h3 { color: #333; }
-    code { background: #f4f4f4; padding: 0.2em 0.4em; border-radius: 4px; }
-    pre { background: #f4f4f4; padding: 1em; border-radius: 6px; overflow-x: auto; }
-  </style>
-</head>
-<body>
-
   <h1>BlabberIt 🗨️</h1>
   <p>BlabberIt is a self-hosted, peer-to-peer chat application built in Go.<br>
   It features end-to-end encryption and stores messages locally when the recipient is offline.</p>
@@ -50,16 +35,6 @@ cd blabberit</code></pre>
 
   <h3>4. Debug Tests</h3>
   <pre><code>dlv test ./internal/user</code></pre>
-
-  <h2>Directory Structure</h2>
-  <pre><code>internal/
-├── user/         → User handlers, models, tests
-├── testutils/    → DB setup for tests
-cmd/
-└── server/       → App entrypoint (coming soon)</code></pre>
-
-  <h2>License</h2>
-  <p>MIT</p>
 
 </body>
 </html>
