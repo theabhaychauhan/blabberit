@@ -28,7 +28,7 @@ func loadConfig() DBConfig {
 		Name: os.Getenv("DB_NAME"),
 		Port: os.Getenv("DB_PORT"),
 	}
-	fmt.Printf("📦 Loaded DB Config: %+v\n", cfg)
+
 	if cfg.Host == "" || cfg.User == "" || cfg.Pass == "" || cfg.Name == "" || cfg.Port == "" {
 		log.Fatal("Missing one or more required DB environment variables")
 	}
