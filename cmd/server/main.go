@@ -15,7 +15,7 @@ func main() {
 	})
 
 	http.HandleFunc("/register", user.RegisterHandler)
-
+	http.HandleFunc("/login", user.LoginHandler)
 	fmt.Println("Starting BlabberIt on :8080...")
 	http.ListenAndServe(":8080", nil)
 }

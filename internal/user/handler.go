@@ -40,3 +40,22 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 		"message": "User Registered",
 	})
 }
+
+func LoginHandler(w http.ResponseWriter, r *http.Request) {
+	username := r.URL.Query().Get("username")
+	if username == "" {
+		http.Error(w, "Username is Required", http.StatusBadRequest)
+		return
+	}
+
+	var user User
+	if err := DB.Where("username = ?", username).First(&user).Error; err != nil {
+		http.Error(w, "User not found", http.StatusNotFound)
+		return
+	}
+
+	json.NewEncoder(w).Encode(map[string]string{
+		"username":  user.Username,
+		"publicKey": user.PublicKey,
+	})
+}
