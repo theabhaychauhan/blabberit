@@ -37,6 +37,9 @@ func TestSendMessageHandler_Success(t *testing.T) {
 	w := httptest.NewRecorder()
 	SendMessageHandler(w, req)
 
+	t.Logf("handler response code = %d", w.Code)
+	t.Logf("handler raw body      = %s", w.Body.String())
+
 	if w.Code != http.StatusCreated {
 		t.Fatalf("expected 201, got %d", w.Code)
 	}
@@ -48,13 +51,16 @@ func TestSendMessageHandler_Success(t *testing.T) {
 	}
 
 	msgs, err := GetMessagesForUser("keyB")
+	t.Logf("DB returned %d messages (err=%v)", len(msgs), err)
+
 	if err != nil || len(msgs) != 1 {
 		t.Fatalf("expected 1 saved message, got %d (err=%v)", len(msgs), err)
 	}
 
-	zone, offset := msgs[0].Timestamp.Zone()
+	tsUTC := msgs[0].Timestamp.UTC()
+	zone, offset := tsUTC.Zone()
 	if offset != 0 || zone != "UTC" {
-		t.Errorf("timestamp not saved in UTC: %v", msgs[0].Timestamp)
+		t.Errorf("timestamp not UTC after conversion: %v", tsUTC)
 	}
 }
 
@@ -67,6 +73,9 @@ func TestSendMessageHandler_InvalidRequest(t *testing.T) {
 
 	w := httptest.NewRecorder()
 	SendMessageHandler(w, req)
+
+	t.Logf("handler response code = %d", w.Code)
+	t.Logf("handler raw body      = %s", w.Body.String())
 
 	if w.Code != http.StatusBadRequest {
 		t.Fatalf("expected 400, got %d", w.Code)

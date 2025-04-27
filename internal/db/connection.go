@@ -49,7 +49,7 @@ func Init() *gorm.DB {
 	once.Do(func() {
 		cfg := loadConfig()
 		dsn := fmt.Sprintf(
-			"host=%s user=%s password=%s dbname=%s port=%s sslmode=disable",
+			"host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=UTC",
 			cfg.Host, cfg.User, cfg.Pass, cfg.Name, cfg.Port,
 		)
 
