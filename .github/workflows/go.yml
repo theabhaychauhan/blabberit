@@ -1,7 +1,22 @@
+# This workflow will build a golang project
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-go
+
 # .github/workflows/ci.yml
+name: Go CI
+
+# ─── Event triggers ───────────────────────────────────────────
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+# ─── Jobs ─────────────────────────────────────────────────────
 jobs:
-  test:
+  build-and-test:
     runs-on: ubuntu-latest
+
+    # Start Postgres as a service container
     services:
       postgres:
         image: postgres:15
@@ -10,7 +25,8 @@ jobs:
           POSTGRES_PASSWORD: blabberpass
           POSTGRES_DB: blabberit_test
         ports:
-          - 5432:5432
+          - "5432:5432"
+        # health-check so the job waits until Postgres is ready
         options: >-
           --health-cmd="pg_isready -U blabberuser"
           --health-interval=10s
@@ -19,11 +35,29 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+
+      # Install Go 1.24
       - uses: actions/setup-go@v5
         with:
           go-version: '1.24'
 
-      - name: Run tests
+      # Cache Go modules (optional but speeds up builds)
+      - name: Cache go modules
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/go/pkg/mod
+            ~/.cache/go-build
+          key: go-${{ runner.os }}-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            go-${{ runner.os }}-
+
+      # Build
+      - name: Build
+        run: go build -v ./...
+
+      # Test (provide DSN expected by testutils.SetupTestDB)
+      - name: Test
         env:
           POSTGRES_DSN: host=localhost user=blabberuser password=blabberpass dbname=blabberit_test port=5432 sslmode=disable TimeZone=UTC
-        run: go test ./...
+        run: go test -v ./...
