@@ -52,7 +52,8 @@ func TestSendMessageHandler_Success(t *testing.T) {
 		t.Fatalf("expected 1 saved message, got %d (err=%v)", len(msgs), err)
 	}
 
-	if !msgs[0].Timestamp.Equal(msgs[0].Timestamp.UTC()) {
+	zone, offset := msgs[0].Timestamp.Zone()
+	if offset != 0 || zone != "UTC" {
 		t.Errorf("timestamp not saved in UTC: %v", msgs[0].Timestamp)
 	}
 }

@@ -14,9 +14,6 @@ func SaveMessage(m *Message) error {
 
 func GetMessagesForUser(publicKey string) ([]Message, error) {
 	var messages []Message
-	err := DB.Where(`"to" = ?`, publicKey).
-		Order("timestamp ASC").
-		Find(&messages).Error
-
+	err := DB.Where(`"to" = ?`, publicKey).Order("timestamp ASC").Find(&messages).Error
 	return messages, err
 }
