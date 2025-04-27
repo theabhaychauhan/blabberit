@@ -5,11 +5,13 @@ import (
 	"net/http"
 )
 
+// ------- Request DTO --------
 type registerRequest struct {
 	Username  string `json:"username"`
 	PublicKey string `json:"publickey"`
 }
 
+// --------- Handlers ---------
 func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 	var req registerRequest
 
@@ -19,20 +21,17 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var existing User
-	if err := DB.Where("username = ?", req.Username).First(&existing).Error; err == nil {
+	if existing, _ := FindUserByUsername(req.Username); existing != nil {
 		http.Error(w, "Username already exists", http.StatusConflict)
 		return
 	}
 
-	user := User{
+	if err := CreateUser(&User{
 		Username:  req.Username,
 		PublicKey: req.PublicKey,
-	}
-
-	result := DB.Create(&user)
-	if result.Error != nil {
+	}); err != nil {
 		http.Error(w, "Failed to create user", http.StatusInternalServerError)
+		return
 	}
 
 	w.WriteHeader(http.StatusCreated)
@@ -48,13 +47,13 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var user User
-	if err := DB.Where("username = ?", username).First(&user).Error; err != nil {
+	user, err := FindUserByUsername(username)
+	if err != nil {
 		http.Error(w, "User not found", http.StatusNotFound)
 		return
 	}
 
-	json.NewEncoder(w).Encode(map[string]string{
+	_ = json.NewEncoder(w).Encode(map[string]string{
 		"username":  user.Username,
 		"publicKey": user.PublicKey,
 	})

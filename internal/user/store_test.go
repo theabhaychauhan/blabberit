@@ -1,31 +1,30 @@
-package user
+// internal/user/store_test.go
+package user_test
 
 import (
 	"testing"
 
 	"github.com/joho/godotenv"
+	"github.com/thechauhanabhay/blabberit/internal/db"
+	"github.com/thechauhanabhay/blabberit/internal/user"
 )
 
 func TestInitDB(t *testing.T) {
-	err := godotenv.Load("../../.env")
-
-	if err != nil {
-		t.Fatal("Failed to load .env:", err)
+	if err := godotenv.Load("../../.env"); err != nil {
+		t.Fatal("failed to load .env:", err)
 	}
 
-	InitDB()
+	db.Init()
 
-	if DB == nil {
-		t.Fatal("Expected DB to be Initialized")
+	if user.DB == nil {
+		t.Fatal("expected user.DB to be injected by db.Init()")
 	}
 
-	sqlDB, err := DB.DB()
+	sqlDB, err := user.DB.DB()
 	if err != nil {
-		t.Fatal("Failed to get raw DB Handler")
+		t.Fatal("failed to get raw DB handle:", err)
 	}
-
-	err = sqlDB.Ping()
-	if err != nil {
-		t.Fatalf("DB connection failed: %v", err)
+	if err = sqlDB.Ping(); err != nil {
+		t.Fatalf("DB ping failed: %v", err)
 	}
 }
