@@ -67,6 +67,7 @@ func Init() *gorm.DB {
 		}
 
 		user.SetDB(db)
+		message.SetDB(db)
 
 		log.Println("Database initialised and migrated")
 	})
