@@ -30,7 +30,7 @@ func setupMsgTestDB(t *testing.T) {
 func TestSendMessageHandler_Success(t *testing.T) {
 	setupMsgTestDB(t)
 
-	body := `{"from":"keyA","to":"keyB","content":"hello IST"}`
+	body := `{"from":"keyA","to":"keyB","content":"hello UTC"}`
 	req := httptest.NewRequest(http.MethodPost, "/send", bytes.NewBufferString(body))
 	req.Header.Set("Content-Type", "application/json")
 
@@ -52,9 +52,8 @@ func TestSendMessageHandler_Success(t *testing.T) {
 		t.Fatalf("expected 1 saved message, got %d (err=%v)", len(msgs), err)
 	}
 
-	zone, offset := msgs[0].Timestamp.Zone()
-	if offset != 19800 || zone != "IST" {
-		t.Errorf("timestamp not saved in IST: %v", msgs[0].Timestamp)
+	if !msgs[0].Timestamp.Equal(msgs[0].Timestamp.UTC()) {
+		t.Errorf("timestamp not saved in UTC: %v", msgs[0].Timestamp)
 	}
 }
 

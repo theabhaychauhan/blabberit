@@ -6,12 +6,6 @@ import (
 	"time"
 )
 
-var ist *time.Location
-
-func init() {
-	ist, _ = time.LoadLocation("Asia/Kolkata")
-}
-
 type SendMessageRequest struct {
 	From    string `json:"from"`
 	To      string `json:"to"`
@@ -30,7 +24,7 @@ func SendMessageHandler(w http.ResponseWriter, r *http.Request) {
 		From:      req.From,
 		To:        req.To,
 		Content:   req.Content,
-		Timestamp: time.Now().In(ist),
+		Timestamp: time.Now().UTC(),
 	}
 
 	if err := SaveMessage(&message); err != nil {
